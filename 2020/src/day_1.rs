@@ -39,7 +39,7 @@ fn question_two() {
 }
 
 fn read_input() -> Vec<u32> {
-    let mut file = File::open("input").unwrap();
+    let mut file = File::open("input/day_1.txt").unwrap();
 
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
