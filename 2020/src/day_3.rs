@@ -53,6 +53,7 @@ fn question_two() {
             cur_slope.right = (cur_slope.right + inc_slope.right) % row.len();
         }
         result *= tree_count;
+        println!("Tree count: {}", tree_count);
     }
 
     println!("Question two: Tree multiplication: {}", result);
