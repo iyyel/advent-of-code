@@ -1,22 +1,17 @@
-use std::fs::File;
-use std::io::Read;
+use crate::common;
+use std::string::ParseError;
 
-struct Input {
+pub struct Input {
     lower_bound: i32,
     upper_bound: i32,
     character: char,
     password: String
 }
 
-fn read_input() -> Vec<Input> {
-    let mut file = File::open("input/day_2.txt").unwrap();
+impl std::str::FromStr for Input {
+    type Err = ParseError;
 
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).unwrap();
-
-    let mut result: Vec<Input> = Vec::new();
-
-    for s in contents.lines() {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         // split the whole line
         let split_result: Vec<&str> = s.split_whitespace().collect();
         
@@ -32,17 +27,21 @@ fn read_input() -> Vec<Input> {
         let password = split_result[2].parse::<String>().unwrap();
 
         let input = Input { lower_bound, upper_bound, character, password };
-        result.push(input);
-    }
 
-    result
+        Ok(input)
+    }
 }
 
-fn question_one() {
-    let data = read_input();
+#[aoc_generator(day2)]
+pub fn input_generator(input: &str) -> Vec<Input> {
+    common::input_vec(input)
+}
+
+#[aoc(day2, part1)]
+pub fn solve_part_01(input: &[Input]) -> usize {
     let mut valid = 0;
     
-    for p in data {
+    for p in input{
         let matches = p.password.matches(p.character).count() as i32;
 
         if matches >= p.lower_bound && matches <= p.upper_bound {
@@ -50,14 +49,14 @@ fn question_one() {
         }
     }
 
-    println!("Question 1: Valid passwords: {}", valid);
+    valid
 }
 
-fn question_two() {
-    let data = read_input();
+#[aoc(day2, part2)]
+pub fn solve_part_02(input: &[Input]) -> usize {
     let mut valid = 0;
     
-    for p in data {
+    for p in input {
         let byte_pass = p.password.as_bytes();
         let char_lower = byte_pass[(p.lower_bound - 1) as usize] as char;
         let char_upper = byte_pass[(p.upper_bound - 1) as usize] as char;
@@ -67,10 +66,5 @@ fn question_two() {
         }
     }
 
-    println!("Question 2: Valid passwords: {}", valid);
-}
-
-fn main() {
-    question_one();
-    question_two();
+    valid
 }
