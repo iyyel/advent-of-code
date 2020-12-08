@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::HashSet;
 
 fn remove_whitespace(s: &str) -> String {
     s.chars().filter(|c| !c.is_whitespace()).collect()
@@ -29,29 +29,32 @@ pub fn solve_part_02(input: &[String]) -> usize {
     let mut answer_sum = 0;
 
     for group in input {
-        let mut group_answers: HashMap<u32, HashSet<char>> = HashMap::new();
-
         let people: Vec<String> = group.split("\n").
                                         into_iter().
                                         map(|l| String::from(l)).
                                         collect();
 
-        for (i, person) in people.iter().enumerate() {
-            let mut answers: HashSet<char> = HashSet::new();
-            if (i == 0) {
-                person.chars().map(|c| answers.insert(c));
-            } else {
-                for c in person.chars() {
-                    if group_answers.get(&((i as u32) - 1)).unwrap().contains(&c) {
-                        answers.insert(c);
-                    }
-                }
-            }
-            group_answers.insert(i as u32, answers);
+        let mut person_zero_answers: HashSet<char> = HashSet::new();
+
+        for c in people[0].chars() {
+            person_zero_answers.insert(c);
         }
 
-        answer_sum += group_answers.get(&((people.len() - 1) as u32)).unwrap().len();
-        
+        for (i, person) in people.iter().enumerate() {
+            if i == 0 {
+                continue;
+            }
+
+            let clone_map = person_zero_answers.clone();
+           
+            for c in clone_map {
+                if !person.chars().any(|x| x == c) {
+                    person_zero_answers.remove(&c);
+                }
+            }
+        }
+
+       answer_sum += person_zero_answers.len();
     }
 
     answer_sum
